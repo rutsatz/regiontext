@@ -33,12 +33,17 @@ public class JavaFXRegion extends Application {
 //        });
 //        
         AnchorPane root = new AnchorPane();
-        RegionTest regionTest = new RegionTest();
+        Semaphore regionTest = new Semaphore(10);
 
         DragResizer.makeResizable(regionTest);
-        
-        root.getChildren().add(regionTest);
+//        DragResizeMod.makeResizable(regionTest);
 
+        Plate plate = new Plate();
+        
+        DragResizer.makeResizable(plate);
+        
+        root.getChildren().addAll(regionTest, plate);
+        
         Scene scene = new Scene(root, 800, 600);
 
         primaryStage.setTitle("Hello World!");

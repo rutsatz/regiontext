@@ -1,9 +1,8 @@
 package javafxregion;
 
-
-
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Region;
 
@@ -13,149 +12,165 @@ import javafx.scene.layout.Region;
  * same way as a window.
  * <p>
  * Height and Width resizing is working (hopefully) properly
- * 
+ *
  * <pre>
  * DragResizer.makeResizable(myAnchorPane);
  * </pre>
  *
- * @author Cannibalsticky (modified from the original DragResizer created by AndyTill)
+ * @author Cannibalsticky (modified from the original DragResizer created by
+ * AndyTill)
  *
  */
 public class DragResizer {
 
-	/**
-	 * The margin around the control that a user can click in to start resizing
-	 * the region.
-	 */
-	private static final int RESIZE_MARGIN = 10;
+    /**
+     * The margin around the control that a user can click in to start resizing
+     * the region.
+     */
+    private static final int RESIZE_MARGIN = 10;
 
-	private final Region region;
+    private final Region region;
 
-	private double y;
+    private double y;
 
-	private double x;
+    private double x;
 
-	private boolean initMinHeight;
+    private boolean initMinHeight;
 
-	private boolean initMinWidth;
+    private boolean initMinWidth;
 
-	private boolean draggableZoneX, draggableZoneY;
+    private boolean draggableZoneX, draggableZoneY;
 
-	private boolean dragging;
+    private boolean dragging;
 
-	private DragResizer(Region aRegion) {
-		region = aRegion;
-	}
+    private double orgSceneX, orgSceneY;
+    private double orgTranslateX, orgTranslateY;
 
-	public static void makeResizable(Region region) {
-		final DragResizer resizer = new DragResizer(region);
+    private DragResizer(Region aRegion) {
+        region = aRegion;
+    }
 
-		region.setOnMousePressed(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				resizer.mousePressed(event);
-			}
-		});
-		region.setOnMouseDragged(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				resizer.mouseDragged(event);
-			}
-		});
-		region.setOnMouseMoved(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				resizer.mouseOver(event);
-			}
-		});
-		region.setOnMouseReleased(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent event) {
-				resizer.mouseReleased(event);
-			}
-		});
-	}
+    public static void makeResizable(Region region) {
+        final DragResizer resizer = new DragResizer(region);
 
-	protected void mouseReleased(MouseEvent event) {
-		dragging = false;
-		region.setCursor(Cursor.DEFAULT);
-	}
+        region.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                resizer.mousePressed(event);
+            }
+        });
+        region.setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                resizer.mouseDragged(event);
+            }
+        });
+        region.setOnMouseMoved(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                resizer.mouseOver(event);
+            }
+        });
+        region.setOnMouseReleased(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                resizer.mouseReleased(event);
+            }
+        });
+    }
 
-	protected void mouseOver(MouseEvent event) {
-		if (isInDraggableZone(event) || dragging) {
-			if (draggableZoneY) {
-				region.setCursor(Cursor.S_RESIZE);
-			}
+    protected void mouseReleased(MouseEvent event) {
+        dragging = false;
+        region.setCursor(Cursor.DEFAULT);
+    }
 
-			if (draggableZoneX) {
-				region.setCursor(Cursor.E_RESIZE);
-			}
+    protected void mouseOver(MouseEvent event) {
+        if (isInDraggableZone(event) || dragging) {
+            if (draggableZoneY) {
+                region.setCursor(Cursor.S_RESIZE);
+            }
 
-		} else {
-			region.setCursor(Cursor.DEFAULT);
-		}
-	}
-	
-	
-	//had to use 2 variables for the controll, tried without, had unexpected behaviour (going big was ok, going small nope.)
-	protected boolean isInDraggableZone(MouseEvent event) {
-		draggableZoneY = (boolean)(event.getY() > (region.getHeight() - RESIZE_MARGIN));
-		draggableZoneX = (boolean)(event.getX() > (region.getWidth() - RESIZE_MARGIN));
-		return (draggableZoneY || draggableZoneX);
-	}
+            if (draggableZoneX) {
+                region.setCursor(Cursor.E_RESIZE);
+            }
 
-	protected void mouseDragged(MouseEvent event) {
-		if (!dragging) {
-			return;
-		}
+        } else {
+//            region.setCursor(Cursor.DEFAULT);
+            region.setCursor(Cursor.MOVE);
+        }
+    }
 
-		if (draggableZoneY) {
-			double mousey = event.getY();
+    //had to use 2 variables for the controll, tried without, had unexpected behaviour (going big was ok, going small nope.)
+    protected boolean isInDraggableZone(MouseEvent event) {
+        draggableZoneY = (boolean) (event.getY() > (region.getHeight() - RESIZE_MARGIN));
+        draggableZoneX = (boolean) (event.getX() > (region.getWidth() - RESIZE_MARGIN));
+        return (draggableZoneY || draggableZoneX);
+    }
 
-			double newHeight = region.getMinHeight() + (mousey - y);
+    protected void mouseDragged(MouseEvent event) {
+        if (!dragging) {
 
-			region.setMinHeight(newHeight);
+            double offsetX = event.getSceneX() - orgSceneX;
+            double offsetY = event.getSceneY() - orgSceneY;
+            double newTranslateX = orgTranslateX + offsetX;
+            double newTranslateY = orgTranslateY + offsetY;
 
-			y = mousey;
-		}
+            ((Node) (event.getSource())).setTranslateX(newTranslateX);
+            ((Node) (event.getSource())).setTranslateY(newTranslateY);
+            return;
+        }
 
-		if (draggableZoneX) {
-			double mousex = event.getX();
+        if (draggableZoneY) {
+            double mousey = event.getY();
 
-			double newWidth = region.getMinWidth() + (mousex - x);
+            double newHeight = region.getMinHeight() + (mousey - y);
 
-			region.setMinWidth(newWidth);
+            region.setMinHeight(newHeight);
 
-			x = mousex;
+            y = mousey;
+        }
 
-		}
+        if (draggableZoneX) {
+            double mousex = event.getX();
 
-	}
+            double newWidth = region.getMinWidth() + (mousex - x);
 
-	protected void mousePressed(MouseEvent event) {
+            region.setMinWidth(newWidth);
 
-		// ignore clicks outside of the draggable margin
-		if (!isInDraggableZone(event)) {
-			return;
-		}
+            x = mousex;
 
-		dragging = true;
+        }
 
-		// make sure that the minimum height is set to the current height once,
-		// setting a min height that is smaller than the current height will
-		// have no effect
-		if (!initMinHeight) {
-			region.setMinHeight(region.getHeight());
-			initMinHeight = true;
-		}
+    }
 
-		y = event.getY();
+    protected void mousePressed(MouseEvent event) {
 
-		if (!initMinWidth) {
-			region.setMinWidth(region.getWidth());
-			initMinWidth = true;
-		}
+        // ignore clicks outside of the draggable margin
+        if (!isInDraggableZone(event)) {
+            orgSceneX = event.getSceneX();
+            orgSceneY = event.getSceneY();
+            orgTranslateX = ((Node) (event.getSource())).getTranslateX();
+            orgTranslateY = ((Node) (event.getSource())).getTranslateY();
+            return;
+        }
 
-		x = event.getX();
-	}
+        dragging = true;
+
+        // make sure that the minimum height is set to the current height once,
+        // setting a min height that is smaller than the current height will
+        // have no effect
+        if (!initMinHeight) {
+            region.setMinHeight(region.getHeight());
+            initMinHeight = true;
+        }
+
+        y = event.getY();
+
+        if (!initMinWidth) {
+            region.setMinWidth(region.getWidth());
+            initMinWidth = true;
+        }
+
+        x = event.getX();
+    }
 }
