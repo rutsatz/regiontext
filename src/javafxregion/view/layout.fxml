@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Group?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.shape.Rectangle?>
+
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Pane layoutX="142.0" layoutY="34.0" prefHeight="177.0" prefWidth="86.0" style="-fx-background-color: #;">
+         <children>
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="172.0" layoutX="14.0" layoutY="3.0" stroke="BLACK" strokeType="INSIDE" width="17.0" />
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="172.0" layoutX="55.0" layoutY="3.0" stroke="BLACK" strokeType="INSIDE" width="17.0" />
+         </children>
+      </Pane>
+      <Group layoutX="333.0" layoutY="174.0">
+         <children>
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="52.0" stroke="BLACK" strokeType="INSIDE" width="133.0" />
+            <Line id="leftRearWheel" endX="-8.0" endY="-6.0" layoutX="43.0" layoutY="27.0" startX="-8.0" startY="-27.0" />
+            <Line id="leftFrontWheel" endX="-7.0" endY="-5.0" layoutX="101.0" layoutY="27.0" startX="-7.0" startY="-27.0" />
+            <Line id="rightRearWheel" endX="-8.0" endY="-6.0" layoutX="43.0" layoutY="54.0" startX="-8.0" startY="-27.0" />
+            <Line id="rightFrontWheel" endX="-7.0" endY="-5.0" layoutX="101.0" layoutY="53.0" startX="-7.0" startY="-27.0" />
+         </children>
+      </Group>
+   </children>
+</AnchorPane>

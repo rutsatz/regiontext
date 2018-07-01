@@ -3,7 +3,6 @@ package javafxregion;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -90,9 +89,13 @@ public final class Semaphore extends Region {
      */
     private void makeCircleResizable(Circle circle, double yPercentPos) {
         circle.radiusProperty().bind(Bindings.createDoubleBinding(() -> {
+//            System.out.println(circle.radiusProperty().greaterThan(this.getHeight() * 0.2));
+            System.out.println(this.getHeight() * 0.2);
             return (this.getMinWidth() - 40) / 2;
         }, this.widthProperty()));
 
+        
+        
         circle.centerXProperty().bind(Bindings.createDoubleBinding(() -> {
             return this.getMinWidth() / 2;
         }, this.widthProperty()));
